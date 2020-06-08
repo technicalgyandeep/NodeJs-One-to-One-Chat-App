@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link href="logo.png" rel="icon">
+    <!--google fonts-->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <!--font awesome CDN-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!--stylesheet start-->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 955px;
+            background-color: #ff7675;
+            margin: auto;
+            height: 80vh;
+            border-radius: 12px;
+            overflow-y: scroll;
+            margin-bottom: 23px;
+        }
+
+        .message {
+            background-color: purple;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            width: 24%;
+            padding: 10px;
+            margin: 17px 12px;
+            border: 2px solid #fff;
+            border-radius: 12px;
+        }
+
+        .right {
+            float: right;
+            clear: both;
+        }
+
+        .left {
+            float: left;
+            clear: both;
+        }
+    </style>
+    <!--stylesheet end-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+    <!--This is the Root-->
+
+    <nav class="navbar navbar-light bg-dark justify-content-between">
+        <a class="navbar-brand" style="color: #fff;">GyanChat</a>
+        <form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search Messages" aria-label="Search"
+                style="width: 300px;">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </nav>
+
+    <div class="container">
+        <div class="message left">
+            Client X: How Are You ?
+        </div>
+        <div class="message right">
+            Client Y: I am fine Bro.
+        </div>
+    </div>
+
+    <div class="send" style="margin-left: 200px; margin-top: -9px;">
+        <form action="" id="send-container">
+            <input type="text" id="messageInp" placeholder="Type Your Message" required
+                style="width: 1140px; height: 45px; border: 0; background-color: aqua; color: #fff; border-radius: 15px; outline: none;">
+            <button type="submit" id="btn"
+                style="width: 50px; height: 50px; border: 0; outline: none; background: orangered; color: #fff; border-radius: 50px; margin-left: -52px; cursor: pointer;"><i
+                    class="fa fa-send"></i></button>
+        </form>
+    </div>
+    <!--End Root-->
+
+    <!--Logic Part Start-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        const socket = io()
+        let name;
+        let textarea = document.querySelector('#messageInp')
+        let container = document.querySelector('.container')
+        do{
+            name = prompt('Please Enter Your Name')
+        } while(!name)
+
+        textarea.addEventListener('keyup', (e) => {
+            if(e.key === 'Enter') {
+                sendMessage(e.target.value)
+            }
+        })
+
+        function sendMessage(message) {
+            let msg = {
+                user: name,
+                message: message
+            }
+
+            // Append
+            appendMessage(msg, 'message left')
+        }
+
+        //send to server
+        socket.emit('message', msg)
+
+
+
+        function appendMessage(msg, type) {
+            let mainDiv = document.createElement('div')
+            let className = type
+            mainDiv.classList.add(className, 'message')
+
+            let markup = `
+                <h4>${msg.user}</h4>
+                <p>${msg.message}</p>
+            `   
+
+                mainDiv.innerHTML = markup
+
+                container.appendChild(mainDiv)
+        }
+
+// Receive Messsage
+
+socket.on('message', () => {
+    console.log(msg)
+})
+
+
+
+
+
+
+
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
